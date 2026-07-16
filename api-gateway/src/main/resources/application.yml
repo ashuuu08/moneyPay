@@ -1,0 +1,102 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # ---------- Auth Service ----------
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/v1/auth/**
+          filters:
+            - StripPrefix=0
+
+        # ---------- Payment Service ----------
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payments/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 40
+                redis-rate-limiter.requestedTokens: 1
+
+        # ---------- Wallet Service ----------
+        - id: wallet-service
+          uri: lb://wallet-service
+          predicates:
+            - Path=/api/v1/wallets/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+
+        # ---------- Ledger Service ----------
+        - id: ledger-service
+          uri: lb://ledger-service
+          predicates:
+            - Path=/api/v1/ledger/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+
+        # ---------- Notification Service ----------
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+
+        # ---------- Merchant Service ----------
+        - id: merchant-service
+          uri: lb://merchant-service
+          predicates:
+            - Path=/api/v1/merchants/**
+          filters:
+            - StripPrefix=0
+            - name: JwtAuthFilter
+
+      default-filters:
+        - AddResponseHeader=X-Gateway, MoneyPay-Gateway
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URI:http://admin:admin@localhost:8761/eureka}
+  instance:
+    prefer-ip-address: true
+
+jwt:
+  secret: ${JWT_SECRET:change_this_in_production_must_be_at_least_32_chars}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    com.moneyPay.gateway: DEBUG
