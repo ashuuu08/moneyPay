@@ -243,3 +243,95 @@ services:
       REDIS_PORT: 6379
       JWT_SECRET: ${JWT_SECRET:-change_this_in_production_must_be_at_least_32_chars}
     profiles: [full]
+
+  # ── Payment Service ───────────────────────────────────────────────────
+  payment-service:
+    build:
+      context: ../payment-service
+      dockerfile: Dockerfile
+    image: moneypay/payment-service:latest
+    container_name: moneypay-payment
+    restart: unless-stopped
+    networks: [moneypay-net]
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres-payment:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+      DB_HOST: postgres-payment
+      DB_PORT: 5432
+      DB_NAME: moneypay_payment
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      EUREKA_URI: http://${EUREKA_USER:-admin}:${EUREKA_PASSWORD:-admin}@eureka-server:8761/eureka
+      JWT_SECRET: ${JWT_SECRET:-change_this_in_production_must_be_at_least_32_chars}
+    profiles: [full]
+
+  # ── Wallet Service ────────────────────────────────────────────────────
+  wallet-service:
+    build:
+      context: ../wallet-service
+      dockerfile: Dockerfile
+    image: moneypay/wallet-service:latest
+    container_name: moneypay-wallet
+    restart: unless-stopped
+    networks: [moneypay-net]
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres-wallet:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+      DB_HOST: postgres-wallet
+      DB_PORT: 5432
+      DB_NAME: moneypay_wallet
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EUREKA_URI: http://${EUREKA_USER:-admin}:${EUREKA_PASSWORD:-admin}@eureka-server:8761/eureka
+    profiles: [full]
+
+  # ── Ledger Service ────────────────────────────────────────────────────
+  ledger-service:
+    build:
+      context: ../ledger-service
+      dockerfile: Dockerfile
+    image: moneypay/ledger-service:latest
+    container_name: moneypay-ledger
+    restart: unless-stopped
+    networks: [moneypay-net]
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres-ledger:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-local}
+      DB_HOST: postgres-ledger
+      DB_PORT: 5432
+      DB_NAME: moneypay_ledger
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-changeme}
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EUREKA_URI: http://${EUREKA_USER:-admin}:${EUREKA_PASSWORD:-admin}@eureka-server:8761/eureka
+    profiles: [full]
