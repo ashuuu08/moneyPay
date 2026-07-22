@@ -2,6 +2,10 @@
 
 **A production-grade, event-driven payment processing platform built on microservices architecture** — inspired by systems like Razorpay/PayU, designed to demonstrate real-world scalable financial infrastructure.
 
+
+
+
+
 ![Java](https://img.shields.io/badge/Java-21-orange)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.1.0-brightgreen)
 ![Kafka](https://img.shields.io/badge/Kafka-Event%20Streaming-black)
