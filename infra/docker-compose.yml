@@ -143,6 +143,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
     volumes:
       - postgres_wallet_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d moneypay_wallet"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ── PostgreSQL — Ledger ────────────────────────────────────────────────
   postgres-ledger:
@@ -156,6 +161,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
     volumes:
       - postgres_ledger_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d moneypay_ledger"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ── PostgreSQL — Merchant ──────────────────────────────────────────────
   postgres-merchant:
@@ -169,6 +179,11 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
     volumes:
       - postgres_merchant_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d moneypay_merchant"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ── Eureka Server ─────────────────────────────────────────────────────
   eureka-server:
