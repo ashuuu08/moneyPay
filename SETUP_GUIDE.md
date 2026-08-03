@@ -23,8 +23,7 @@ Docker runs **PostgreSQL, Kafka, Redis, Zookeeper** — all required infra.
 
 ## STEP 2 — Install Maven
 
-1. Download: https://maven.apache.org/download.cgi  
-   → Pick: `apache-maven-3.9.x-bin.zip`
+1. Download: https://maven.apache.org/download.cgi→ Pick: `apache-maven-3.9.x-bin.zip`
 2. Extract to `C:\maven`
 3. Add to System PATH:
    - Search **"Environment Variables"** in Start
@@ -101,17 +100,17 @@ docker compose ps
 
 You should see all these as **healthy/running**:
 
-| Container | Port | Status |
-|---|---|---|
-| moneypay-postgres-auth | 5432 | healthy |
-| moneypay-postgres-payment | 5432 | healthy |
-| moneypay-postgres-wallet | 5432 | healthy |
-| moneypay-postgres-ledger | 5432 | healthy |
+| Container                  | Port | Status  |
+| -------------------------- | ---- | ------- |
+| moneypay-postgres-auth     | 5432 | healthy |
+| moneypay-postgres-payment  | 5432 | healthy |
+| moneypay-postgres-wallet   | 5432 | healthy |
+| moneypay-postgres-ledger   | 5432 | healthy |
 | moneypay-postgres-merchant | 5432 | healthy |
-| moneypay-kafka | 9092 | healthy |
-| moneypay-zookeeper | 2181 | healthy |
-| moneypay-redis | 6379 | healthy |
-| moneypay-kafdrop | 9000 | running |
+| moneypay-kafka             | 9092 | healthy |
+| moneypay-zookeeper         | 2181 | healthy |
+| moneypay-redis             | 6379 | healthy |
+| moneypay-kafdrop           | 9000 | running |
 
 > **Kafka UI**: Open http://localhost:9000 in browser to see topics.
 
@@ -125,6 +124,7 @@ mvn clean install -DskipTests
 ```
 
 Expected output at the end:
+
 ```
 [INFO] BUILD SUCCESS
 ```
@@ -136,16 +136,19 @@ Expected output at the end:
 Open **9 separate PowerShell windows** and run one command each:
 
 **Window 1 — Eureka (start this FIRST)**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\eureka-server
 mvn spring-boot:run
 ```
-Wait until you see: `Eureka Server is started`  
+
+Wait until you see: `Eureka Server is started`
 Then open: http://localhost:8761
 
 ---
 
 **Window 2 — Auth Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\auth-service
 mvn spring-boot:run
@@ -154,6 +157,7 @@ mvn spring-boot:run
 ---
 
 **Window 3 — API Gateway**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\api-gateway
 mvn spring-boot:run
@@ -162,6 +166,7 @@ mvn spring-boot:run
 ---
 
 **Window 4 — Payment Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\payment-service
 mvn spring-boot:run
@@ -170,6 +175,7 @@ mvn spring-boot:run
 ---
 
 **Window 5 — Wallet Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\wallet-service
 mvn spring-boot:run
@@ -178,6 +184,7 @@ mvn spring-boot:run
 ---
 
 **Window 6 — Ledger Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\ledger-service
 mvn spring-boot:run
@@ -186,6 +193,7 @@ mvn spring-boot:run
 ---
 
 **Window 7 — Notification Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\notification-service
 mvn spring-boot:run
@@ -194,6 +202,7 @@ mvn spring-boot:run
 ---
 
 **Window 8 — Merchant Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\merchant-service
 mvn spring-boot:run
@@ -202,6 +211,7 @@ mvn spring-boot:run
 ---
 
 **Window 9 — Alert Service**
+
 ```powershell
 cd C:\Users\pc\Downloads\moneyPay\moneyPay\alert-service
 mvn spring-boot:run
@@ -212,8 +222,9 @@ mvn spring-boot:run
 ## STEP 7 — Verify Everything is Running
 
 ### Check Eureka Dashboard
-Open: http://localhost:8761  
-You should see all services registered:
+
+Open: http://localhost:8761You should see all services registered:
+
 - AUTH-SERVICE
 - API-GATEWAY
 - PAYMENT-SERVICE
@@ -224,7 +235,9 @@ You should see all services registered:
 - ALERT-SERVICE
 
 ### Health Checks
+
 Run these in PowerShell:
+
 ```powershell
 # Gateway
 curl http://localhost:8080/actuator/health
@@ -294,26 +307,26 @@ curl http://localhost:8080/api/v1/ledger/payments/PAYMENT_UUID_HERE `
 
 ## Swagger UI Links (API Docs)
 
-| Service | Swagger URL |
-|---|---|
-| Auth Service | http://localhost:8081/swagger-ui.html |
-| Payment Service | http://localhost:8082/swagger-ui.html |
-| Wallet Service | http://localhost:8083/swagger-ui.html |
-| Ledger Service | http://localhost:8084/swagger-ui.html |
+| Service          | Swagger URL                           |
+| ---------------- | ------------------------------------- |
+| Auth Service     | http://localhost:8081/swagger-ui.html |
+| Payment Service  | http://localhost:8082/swagger-ui.html |
+| Wallet Service   | http://localhost:8083/swagger-ui.html |
+| Ledger Service   | http://localhost:8084/swagger-ui.html |
 | Merchant Service | http://localhost:8086/swagger-ui.html |
 
 ---
 
 ## Common Errors & Fixes
 
-| Error | Fix |
-|---|---|
-| `Connection refused :5432` | Docker not running — open Docker Desktop first |
-| `FlywayException: validate failed` | DB schema mismatch — run `docker compose down -v` then `docker compose up -d` |
-| `UnknownHostException: kafka` | Services must use `localhost:9092` not `kafka:29092` when running locally (not in Docker) |
-| `Could not resolve eureka server` | Start eureka-server first and wait for it to fully start |
-| `BUILD FAILURE` in mvn | Run `mvn clean install -DskipTests` from root moneyPay folder first |
-| Port already in use | Run `netstat -ano | findstr :8082` to find the PID, then `taskkill /PID <pid> /F` |
+| Error                                | Fix                                                                                          |
+| ------------------------------------ | -------------------------------------------------------------------------------------------- |
+| `Connection refused :5432`         | Docker not running — open Docker Desktop first                                              |
+| `FlywayException: validate failed` | DB schema mismatch — run`docker compose down -v` then `docker compose up -d`            |
+| `UnknownHostException: kafka`      | Services must use`localhost:9092` not `kafka:29092` when running locally (not in Docker) |
+| `Could not resolve eureka server`  | Start eureka-server first and wait for it to fully start                                     |
+| `BUILD FAILURE` in mvn             | Run`mvn clean install -DskipTests` from root moneyPay folder first                         |
+| Port already in use                  | Run `netstat -ano                                                                            |
 
 ---
 
