@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/**
+ * Request payload for registering a new user.
+ */
 @Data
 public class RegisterRequest {
 

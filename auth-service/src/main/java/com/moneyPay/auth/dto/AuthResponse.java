@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * Data Transfer Object for Authentication Responses.
+ */
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)

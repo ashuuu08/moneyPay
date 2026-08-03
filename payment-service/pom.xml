@@ -13,7 +13,7 @@
 
     <artifactId>payment-service</artifactId>
     <name>payment-service</name>
-    <description>Payment initiation, gateway integration, idempotency (Phase 2)</description>
+    <description>Payment initiation, gateway integration, idempotency handling (Phase 2)</description>
 
     <dependencies>
         <dependency>

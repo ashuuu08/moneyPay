@@ -53,6 +53,7 @@ public class JwtService {
                 .getPayload();
     }
 
+    /** Extract the user ID from the token subject. */
     public String extractUserId(String token) {
         return extractClaims(token).getSubject();
     }
