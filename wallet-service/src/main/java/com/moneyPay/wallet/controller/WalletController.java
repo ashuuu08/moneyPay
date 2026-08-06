@@ -24,6 +24,7 @@ import java.util.UUID;
 @Tag(name = "Wallets", description = "Wallet balance and transaction history APIs")
 public class WalletController {
 
+
     private final WalletService walletService;
 
     @Operation(summary = "Get wallet balance for a user")
@@ -32,6 +33,7 @@ public class WalletController {
         return ResponseEntity.ok(ApiResponse.ok(walletService.getWallet(userId)));
     }
 
+    
     @Operation(summary = "Get paginated transaction history for a user's wallet")
     @GetMapping("/{userId}/transactions")
     public ResponseEntity<ApiResponse<Page<WalletTransaction>>> getTransactions(
